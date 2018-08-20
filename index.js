@@ -59,6 +59,6 @@ async function main() {
         document.getElementById('data').innerHTML = `<p>File data</p><textarea rows="4" cols="50">${data}</textarea><p>Hash</p><p>${hash}</p>`
         // const response = await p.sendData(hash, 'url');
     } catch (e) {
-        document.getElementById('file-error').innerText = e.message ;
+        document.getElementById('file-error').innerText = e.message;
     }
 }
