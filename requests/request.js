@@ -2,8 +2,13 @@ const rp = require('request-promise');
 require('dotenv').config();
 
 const AUTH = process.env.AUTH;
+const GO_SERVER = process.env.GO_SERVER;
 
-const addAsset = async (assetID, hash) => request('POST', `http://ec2-18-210-150-89.compute-1.amazonaws.com:8080/a/new/${assetID}/${hash}`);
+const addAsset = async (assetID, hash) => await request('POST', `${GO_SERVER}/a/new/${assetID}/${hash}`);
+
+const getAssets = async () => await request('GET', `${GO_SERVER}/list`);
+
+const getProof = async (assetID, txNumber, hash, timestamp) => await request('GET', `${GO_SERVER}/proof/${assetID}/${txNumber}/${hash}/${timestamp}`);
 
 async function request(method, url) {
     const options = {
@@ -20,5 +25,7 @@ async function request(method, url) {
 }
 
 module.exports = {
-    addAsset: addAsset
+    addAsset: addAsset,
+    getAssets: getAssets,
+    getProof: getProof
 };

@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 require('dotenv').config();
 
-const userName = process.env.LOGIN;
+const username = process.env.LOGIN;
 const password = process.env.PASSWORD;
 const url = process.env.URL;
 const dataBase = process.env.DB;
 
-const uri = `mongodb://${url}/${dataBase}`;
+const uri = `mongodb://${username}:${password}@${url}/${dataBase}`;
 
 const options = {
     autoIndex: false,

@@ -2,47 +2,51 @@ require('./connector');
 const file = require('./schemas/file');
 
 const File = {
-    add: (hash, fileData) => {
+    add: (hash, name, fileData) => {
         file.find({}, (err, doc) => {
             const collection = doc[0];
 
             if (collection !== undefined) {
                 const fileObject = collection.files;
-                fileObject[hash] = fileData;
-                file.updateOne({}, {files: collection.files}, (err, doc) => {})
+                fileObject[HexToBase64(hash)] = {
+                    name: name,
+                    data: fileData
+                };
+                file.updateOne({}, {files: collection.files}, (err, doc) => {
+                })
             } else {
                 const fileObject = {};
-                fileObject[hash] = fileData;
-                file.create({files: fileObject}, (err, doc) => {})
+                fileObject[HexToBase64(hash)] = {
+                    name: name,
+                    data: fileData
+                };
+                file.create({files: fileObject}, (err, doc) => {
+                })
             }
         })
     },
     getOne: (hash) => {
-        new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             file.find({}, (err, doc) => {
                 const files = doc[0].files;
                 const file = files[hash];
                 if (file !== undefined)
                     resolve(file);
                 else
-                    reject('');
+                    reject({});
             });
         });
     },
-    getAll: () => {
-        new Promise((resolve, reject) => {
-            file.find({}, (err, doc) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-
-                const files = doc[0].files;
-                resolve(files);
-            });
-        });
+    getAll: async () => {
+        const response = await file.find({}, (err, doc) => { });
+        return response[0].files;
     }
+};
+
+function HexToBase64(str) {
+    return Buffer.from(str, 'hex').toString('base64')
 }
+
 
 module.exports = {
     file: File

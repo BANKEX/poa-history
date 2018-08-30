@@ -15,6 +15,8 @@ DB: Selected Mongo Database
 
 AUTH: Auth access token to golang server
 
+GO_SERVER: URL of golang server
+
 ```
 ## Deploying
 
