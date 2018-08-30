@@ -1,5 +1,5 @@
 const web3 = new Web3();
-const URL = 'http://localhost:3000';
+const URL = 'http://23.100.12.138:3000';
 
 const left = 0;
 const right = 1;
@@ -27,7 +27,7 @@ async function moveData() {
                     </tbody>
                 </table>
                 <div class="text-center col-12">
-                    <button class="btn btn-lg btn-info" data-clipboard-target=".er">Copy</button>
+                    <button class="btn btn-lg btn-info er" data-clipboard-target=".er">Copy</button>
                 </div>
             </div>
         </div

@@ -98,7 +98,7 @@ async function setData() {
        <td>${assets[i].name}</td>
         <td>${assets[i].txNumber}</td>
         <td class="text-center">
-            <button onclick="downloadFile('${assets[i].hash}', '${assets[i].name}')" class="btn btn-default btn-circle btn-sm btn-info">Download</button>
+            <button onclick="downloadFile('${Base64toHEX(assets[i].hash)}', '${assets[i].name}')" class="btn btn-default btn-circle btn-sm btn-info">Download</button>
         </td>
     `;
     }
