@@ -1,7 +1,30 @@
 const web3 = new Web3();
+const URL = 'http://localhost:3000';
 
 const left = 0;
 const right = 1;
+
+let assetID;
+let fileData;
+let serverData;
+function getAssetID() {
+    const _assetID = document.getElementById('AssetId').value;
+    if (_assetID != '')
+        assetID = _assetID;
+    else
+        throw alert('Enter assetID');
+}
+
+async function moveData() {
+    const data = await getFile();
+    console.log(data)
+    serverData = await sendData(data);
+    console.log(serverData)
+}
+
+async function getFile() {
+    return await p.getFile();
+}
 
 function verify(assetId, txNumber, data, timestamp) {
     const response = getData(assetId, txNumber, data, timestamp);
@@ -175,59 +198,86 @@ class PoA {
     getHash(data) {
         return web3.utils.keccak256(data);
     }
-
-    /**
-     * Allows to send any data to any url
-     * @param data Any data
-     * @param url Any server url
-     * @return {Promise<*>} response
-     */
-    async sendData(data, url) {
-        var settings = {
-            "async": true,
-            "crossDomain": true,
-            "url": url,
-            "method": "POST",
-            "headers": {
-                "Content-Type": "application/json",
-                "Cache-Control": "no-cache"
-            },
-            "data": JSON.stringify(data),
-            "processData": false,
-        };
-
-        const result = await $.ajax(settings);
-        return result;
-    }
 }
 
 const p = new PoA();
 
-async function main() {
+function getCell1(assetId, txNumber) {
+    const a = p.getHash(txNumber);
+    const b = p.getHash(assetId);
+    return p.getHash(a.substring(2) + b.substring(2));
+}
+
+// function getCell(assetId, txNumber) {
+//     const a = getHash(txNumber);
+//     const b = getHash(assetId);
+//     const concatArray = concatUint8Arrays(a, b);
+//     const key = getHash("0x" + Uint8ArrayToHex(concatArray));
+//     return "0x" + Uint8ArrayToHex(key);
+// }
+
+async function sendData(data) {
+    const publicKey = await getServerPublicKey();
+    console.log(publicKey)
+    const enctyptedData = encryptData(publicKey, data);
+    const clientKeyPair = newClientKeyPair();
+    const signature = signData(clientKeyPair, data);
+    const clientPublicKey = getClientPublicKey(clientKeyPair);
+    const JSON_data = JSON.stringify({
+        data: enctyptedData,
+        signature: signature,
+        clientPubKey: clientPublicKey
+    });
+    const response = await query('POST', URL + '/data', JSON_data);
+    return response;
+}
+
+async function getServerPublicKey() {
     try {
-        const data = await p.getFile();
-        document.getElementById('file-error').innerText = '';
-        const hash = p.getHash(data);
-        document.getElementById('data').innerHTML = `<p>File data</p><textarea rows="4" cols="50">${data}</textarea><p>Hash</p><p>${hash}</p>`
-        // const response = await p.sendData(hash, 'url');
+        return await query('GET', URL + '/getPubKey');
     } catch (e) {
-        document.getElementById('file-error').innerText = e.message;
+        throw new Error('Cannot get server public key');
     }
 }
 
-function getCell(assetId, txNumber) {
-    const a = getHash(txNumber);
-    const b = getHash(assetId);
-    const concatArray = concatUint8Arrays(a, b);
-    const key = getHash("0x" + Uint8ArrayToHex(concatArray));
-    return "0x" + Uint8ArrayToHex(key);
+function newClientKeyPair() {
+    return new NodeRSA.RSA({b: 1024});
 }
 
-// function getCell1(assetId, txNumber) {
-//     const a = p.getHash(txNumber);
-//     const b = p.getHash(assetId);
-//     return p.getHash(a + b.substring(2))
-// }
+function getClientPublicKey(clientKeyPair) {
+    return clientKeyPair.exportKey('pkcs1-public');
+}
+
+function encryptData(serverPublicKey, data) {
+    const key = new NodeRSA.RSA(serverPublicKey, 'pkcs1-public');
+    return key.encrypt(data, 'base64');
+}
+
+function signData(clientKey, data) {
+    return clientKey.sign(data);
+}
+
+async function query(method, url, data) {
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": url,
+        "method": method,
+        "processData": false,
+    };
+
+    if (data) {
+        settings.data = data;
+        settings.headers = {
+            "Content-Type": "application/json"
+        };
+    }
+
+    const result = await $.ajax(settings);
+    return result;
+};
+
+
 
 
 

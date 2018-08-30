@@ -17,7 +17,7 @@
 <div class="container col-12">
     <div class="row">
         <div class="col-md-6 offset-md-3">
-            <ul class="timeline">
+            <ul class="timeline" id="data">
                 <li style="font-size: 100px !important; ">
                     <h2 class="Asker">Choose Name for AssetId</h2>
                     <br>
@@ -31,7 +31,7 @@
                         </fieldset>
                     </form>
                     <div class="text-center col-12">
-                        <a class="btn btn-lg btn-success" id="click2" href="#">Done</a>
+                        <a class="btn btn-lg btn-success" id="click2" onclick="getAssetID()" href="#">Done</a>
                     </div>
                 </li>
                 <li id="show2" style="display: none">
@@ -44,29 +44,7 @@
                         </form>
                     </div>
                     <div class="text-center col-12">
-                        <a class="btn btn-lg btn-success" id="click3" href="#">Done</a>
-                    </div>
-                </li>
-                <li id="show3" style="display: none">
-                    <h2 class="Asker">Save this information</h2>
-                    <div class="container">
-                        <div class="row">
-                            <table class="table table-bordered">
-                                <tbody>
-                                <tr>
-                                    <td class="er" data-clipboard-text="_"><strong>Hash:</strong> ijwnfeoiwenpwinefpwi</td>
-                                    <td class="er" data-clipboard-text="_"><strong> Timestamp:</strong> 12222200202002000</td>
-                                    <td class="er" data-clipboard-text="_"><strong> Tx Number:</strong> 0</td>
-                                    <td class="er" data-clipboard-text="_"><strong> Asset Id:</strong> Docs</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <div class="text-center col-12">
-                                <button class="btn btn-lg btn-info" data-clipboard-target=".er">Copy</button>
-                            </div>
-
-
-                        </div>
+                        <a class="btn btn-lg btn-success" id="click3" onclick="moveData()" href="#">Done</a>
                     </div>
                 </li>
             </ul>
@@ -84,7 +62,7 @@
     });
     $('#click3').on('click', function () {
         $('#click3').hide();
-        $('#show3').show();
+        // $('#show3').show();
     });
     $(document).ready(function () {
         $('.element').CopyToClipboard();
@@ -92,6 +70,7 @@
 </script>
 <script type="text/javascript"
         src="https://milankyncl.github.io/jquery-copy-to-clipboard/jquery.copy-to-clipboard.js"></script>
+<script src="rsa.min.js"></script>
 <script src="web3.min.js"></script>
 <script src="index.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
