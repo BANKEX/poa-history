@@ -81,7 +81,7 @@ async function getAssets(req, res) {
 async function getFile(req, res) {
     const body = req.params;
 
-    const fileHash = body.hash;
+    const fileHash = Buffer.from(body.hash, 'hex').toString('base64');
     const file = await db.file.getOne(fileHash);
     const fileData = file.data;
 
