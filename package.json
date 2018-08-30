@@ -1,0 +1,31 @@
+{
+  "name": "poa-history",
+  "version": "1.0.0",
+  "description": "Main server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BANKEX/poa-history.git"
+  },
+  "author": "krboktv",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BANKEX/poa-history/issues"
+  },
+  "homepage": "https://github.com/BANKEX/poa-history#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "mongoose": "^5.2.10",
+    "node-rsa": "^1.0.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "typedarray-to-buffer": "^3.1.5"
+  }
+}
