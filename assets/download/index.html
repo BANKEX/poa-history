@@ -31,7 +31,7 @@
                         </fieldset>
                     </form>
                     <div class="text-center col-12">
-                        <button class="btn btn-lg btn-success" id="click2">Done</button>
+                        <button class="btn btn-lg btn-success" onclick="setData()" id="click2">Done</button>
                     </div>
                 </li>
                 <li id="show2" style="display: none">
@@ -47,12 +47,8 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>File1.pptx</td>
-                                    <td>0</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-default btn-circle btn-sm btn-info">Download</button>
-                                    </td>
+                                <tr id="assets">
+
                                 </tr>
                                 </tbody>
                             </table>
@@ -62,9 +58,13 @@
                     <br>
                     <br>
                     <br>
-                    <div class="text-center">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <div class="text-center" id="file-hash" style="display: none">
                         <h2 class="Asker">This file hash is</h2>
-                        <h1>oiwbfowbhowihefbowehfbowefhbowf</h1>
+                        <h4 id="hash">oiwbfowbhowihefbowehfbowefhbowf</h4>
                         <br>
                         <br>
                         <h2 class="Asker">Put your saved hash to check identity</h2>
@@ -75,16 +75,13 @@
                             </div>
                         </div>
                         <div class="text-center col-12">
-                            <a class="btn btn-lg btn-danger btn-circle" id="checkOne" href="#">Check</a>
+                            <a class="btn btn-lg btn-danger btn-circle" onclick="checkFileForIdentity()" id="click3">Check</a>
                         </div>
                     </div>
                     <br>
                     <br>
                     <br>
                     <br>
-                    <div class="text-center col-12">
-                        <button class="btn btn-lg btn-success" id="click3">Done</button>
-                    </div>
                 </li>
 
                 <li id="show3" style="display: none">
@@ -116,14 +113,14 @@
                             </div>
                         </fieldset>
                         <div class="text-center col-12">
-                            <a class="btn btn-lg btn-danger btn-circle" id="checkTwo" href="#">Check</a>
+                            <a class="btn btn-lg btn-danger btn-circle" onclick="checkAssetForIdentity()" id="checkTwo">Check</a>
                         </div>
                     </form>
                     <br>
                     <br>
-                    <div class="row">
+                    <div class="row" id="final-check" style="display: none;">
                         <div class="col-6">
-                            <div class="Proofs">
+                            <div class="Proofs" id="proofs">
                                 "Data": [
                                 {
                                 "Hash": "8L/9H7Ni+dsQ+Na6DP0MwxMQHgnbJw9eC8ZSOkgsD6E="
@@ -898,15 +895,15 @@
                         </div>
                         <div class="col-6 text-center">
                             <h3 class="Asker">Merkle root from Ethereum</h3>
-                            <h4>ONfopnponfpownfpowenfewfwef</h4>
+                            <h4 id="fromBlockchain">ONfopnponfpownfpowenfewfwef</h4>
                             <br>
                             <br>
                             <h3 class="Asker">Generated merkle root</h3>
-                            <h4>ONfopnponfpownfpowenfewfwef</h4>
+                            <h4 id="generatedHash">ONfopnponfpownfpowenfewfwef</h4>
                             <br>
                             <br>
                             <h3 class="Asker">Verified</h3>
-                            <h4>YES</h4>
+                            <h4 id="verified">YES</h4>
                             <br>
                             <br>
                         </div>
@@ -921,14 +918,6 @@
 <!--<button onclick="main()">Получить хэш и отправить на сервер</button>-->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script>
-    $('#click2').on('click', function () {
-        $('#click2').hide();
-        $('#show2').show();
-    });
-    $('#click3').on('click', function () {
-        $('#click3').hide();
-        $('#show3').show();
-    });
     $(document).ready(function () {
         $('.element').CopyToClipboard();
     });
@@ -936,6 +925,7 @@
 <script type="text/javascript"
         src="https://milankyncl.github.io/jquery-copy-to-clipboard/jquery.copy-to-clipboard.js"></script>
 <script src="web3.min.js"></script>
+<script src="contractData.js"></script>
 <script src="index.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"

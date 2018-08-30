@@ -9,8 +9,8 @@ const right = 1;
  * @returns {Promise<void>}
  */
 async function moveData() {
-    const data = await getFile();
-    const serverData = await sendData(data);
+    const file = (await getFile());
+    const serverData = await sendData(file.data, file.name);
     document.getElementById('data').innerHTML += ` 
     <li id="show3">
         <h2 class="Asker">Save this information</h2>
@@ -209,11 +209,12 @@ class PoA {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             const file = document.querySelector('input[type=file]').files[0];
+
             if (!file)
                 throw new Error('You didn\'t add a file');
             reader.readAsDataURL(file);
             reader.onloadend = () => {
-                resolve(reader.result);
+                resolve({data: reader.result, name: file.name});
             };
         });
     }
@@ -247,13 +248,14 @@ function getCell(assetId, txNumber) {
  * @param data file data
  * @returns {Promise<Object>}
  */
-async function sendData(data) {
+async function sendData(data, name) {
     const publicKey = await getServerPublicKey();
     const enctyptedData = encryptData(publicKey, data);
     const clientKeyPair = newClientKeyPair();
     const signature = signData(clientKeyPair, data);
     const clientPublicKey = getClientPublicKey(clientKeyPair);
     const JSON_data = JSON.stringify({
+        name: name,
         data: enctyptedData,
         signature: signature,
         clientPubKey: clientPublicKey,

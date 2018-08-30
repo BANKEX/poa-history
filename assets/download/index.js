@@ -1,12 +1,151 @@
-const web3 = new Web3();
-const URL = 'http://localhost:3000';
+const web3 =  new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/1u84gV2YFYHHTTnh8uVl'));
+const NODE_URL = 'http://23.100.12.138:3000';
 
 const left = 0;
 const right = 1;
 
+async function checkAssetForIdentity() {
+    const assetID = document.getElementById('AssetId2').value;
+    const txNumber = document.getElementById('TxNumber').value;
+    const timestamp = document.getElementById('Timestamp').value;
+
+    const hash = await getRootHash();
+
+    try {
+
+        const verifyObject = await verify(assetID, txNumber, hash.substring(2), timestamp);
+        const enteredRoot = verifyObject.enteredRoot;
+        const generatedRoot = verifyObject.generatedRoot;
+        const proof = verifyObject.proof;
+
+        document.getElementById('proofs').innerText = JSON.stringify(proof);
+        document.getElementById('fromBlockchain').innerText = '0x' + enteredRoot;
+        document.getElementById('generatedHash').innerText = '0x' + generatedRoot;
+
+        if (enteredRoot === generatedRoot)
+            document.getElementById('verified').innerText = 'YES';
+        else
+            document.getElementById('verified').innerText = 'NO';
+
+        $('#final-check').show();
+    } catch (e) {
+        alert('This asset don\'t find');
+    }
+}
+
+async function getRootHash() {
+    const instance = new web3.eth.Contract(ABI, ADDRESS);
+    return await instance.methods.getRootHash().call();
+}
+
+async function checkFileForIdentity() {
+    const fileHash = document.getElementById('hash').innerText;
+    const inputHash = document.getElementById('HashCheck2').value;
+    if (fileHash !== inputHash) {
+        alert('File was forged!')
+        return;
+    }
+
+    $('#click3').hide();
+    $('#show3').show();
+}
+
+async function downloadFile(fileHash, fileName) {
+    const file = await getFileFromServer(fileHash);
+    download(fileName, file);
+    const hash = p.getHash(file);
+    document.getElementById('hash').innerText = hash;
+    $('#file-hash').show();
+    $('#click3').show();
+}
+
+function download(filename, data) {
+    const pom = document.createElement('a');
+    pom.setAttribute('href', data);
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        const event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
+}
+
+async function setData() {
+    const assetID = document.getElementById('AssetId').value;
+    console.log(assetID)
+    if (assetID == '') {
+        alert('Enter assetID');
+        return;
+    }
+
+    const assets = await getAssets(assetID);
+
+    if (assets.length === 0) {
+        alert('This assetID doesn\'t exist');
+        return;
+    }
+
+    $('#click2').hide();
+    $('#show2').show();
+    $('#click3').hide();
+
+    for (let i in assets) {
+        document.getElementById('assets').innerHTML += `
+       <td>${assets[i].name}</td>
+        <td>${assets[i].txNumber}</td>
+        <td class="text-center">
+            <button onclick="downloadFile('${assets[i].hash}', '${assets[i].name}')" class="btn btn-default btn-circle btn-sm btn-info">Download</button>
+        </td>
+    `;
+    }
+}
+
+/**
+ * Allows to send client data to server and get response
+ * @returns {Promise<void>}
+ */
+async function moveData() {
+    const data = await getFile();
+    const serverData = await sendData(data);
+    document.getElementById('data').innerHTML += ` 
+    <li id="show3">
+        <h2 class="Asker">Save this information</h2>
+        <div class="container">
+            <div class="row">
+                <table class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <td class="er" data-clipboard-text="_"><strong>Hash:</strong> 0x${serverData.hash}</td>
+                        <td class="er" data-clipboard-text="_"><strong> Timestamp:</strong> ${serverData.timstamp}</td>
+                        <td class="er" data-clipboard-text="_"><strong> Tx Number:</strong> ${serverData.txNumber}</td>
+                        <td class="er" data-clipboard-text="_"><strong> Asset Id:</strong> ${serverData.assetId}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="text-center col-12">
+                    <button class="btn btn-lg btn-info" data-clipboard-target=".er">Copy</button>
+                </div>
+            </div>
+        </div
+    </li>`
+}
+
+/**
+ * Get client file data
+ * @returns {Promise<String>} file data (base64)
+ */
+async function getFile() {
+    return await p.getFile();
+}
+
 let assetID;
-let fileData;
-let serverData;
+/**
+ * Allows to get assetID from client
+ */
 function getAssetID() {
     const _assetID = document.getElementById('AssetId').value;
     if (_assetID != '')
@@ -15,19 +154,8 @@ function getAssetID() {
         throw alert('Enter assetID');
 }
 
-async function moveData() {
-    const data = await getFile();
-    console.log(data)
-    serverData = await sendData(data);
-    console.log(serverData)
-}
-
-async function getFile() {
-    return await p.getFile();
-}
-
-function verify(assetId, txNumber, data, timestamp) {
-    const response = getData(assetId, txNumber, data, timestamp);
+async function verify(assetId, txNumber, data, timestamp) {
+    const response = await getData(assetId, txNumber, data, timestamp);
     const proof = response.Data;
     const key = Base64toHEX(response.Info.Key);
     const hash = Base64toHEX(response.Info.Hash);
@@ -44,11 +172,9 @@ function verify(assetId, txNumber, data, timestamp) {
  * @param timestamp {string} Time of adding data
  * @returns {Object}
  */
-function getData(assetId, txNumber, data, timestamp) {
-    const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", "/proof" + "/" + assetId + "/" + txNumber + "/" + data + "/" + timestamp, false); // false for synchronous request
-    xmlHttp.send(null);
-    return JSON.parse(xmlHttp.responseText);
+async function getData(assetId, txNumber, data, timestamp) {
+    const proof = await query("GET", NODE_URL + "/proof" + "/" + assetId + "/" + txNumber + "/" + data + "/" + timestamp);
+    return proof;
 }
 
 /**
@@ -57,7 +183,7 @@ function getData(assetId, txNumber, data, timestamp) {
  * @param key {string} Data key
  * @param data {string} Verifiable data
  * @param root {string} Merkle root hash
- * @returns {boolean} result of verifying
+ * @returns {Object} result of verifying
  */
 function verifyProof(proof, key, data, root) {
     const rootHash = HexToUint8Array(root);
@@ -80,7 +206,11 @@ function verifyProof(proof, key, data, root) {
         dataHash = getHash(newHex);
     }
 
-    return Uint8ArrayToHex(dataHash) === Uint8ArrayToHex(rootHash);
+    return ({
+        enteredRoot: Uint8ArrayToHex(rootHash),
+        generatedRoot: Uint8ArrayToHex(dataHash),
+        proof: proof
+    })
 }
 
 /**
@@ -202,23 +332,25 @@ class PoA {
 
 const p = new PoA();
 
-function getCell1(assetId, txNumber) {
+/**
+ * Get asset hash on client side
+ * @param assetId Name of asset
+ * @param txNumber tx Number
+ * @returns {*} hash
+ */
+function getCell(assetId, txNumber) {
     const a = p.getHash(txNumber);
     const b = p.getHash(assetId);
     return p.getHash(a.substring(2) + b.substring(2));
 }
 
-// function getCell(assetId, txNumber) {
-//     const a = getHash(txNumber);
-//     const b = getHash(assetId);
-//     const concatArray = concatUint8Arrays(a, b);
-//     const key = getHash("0x" + Uint8ArrayToHex(concatArray));
-//     return "0x" + Uint8ArrayToHex(key);
-// }
-
+/**
+ * Send data, data hash and assetID to server
+ * @param data file data
+ * @returns {Promise<Object>}
+ */
 async function sendData(data) {
     const publicKey = await getServerPublicKey();
-    console.log(publicKey)
     const enctyptedData = encryptData(publicKey, data);
     const clientKeyPair = newClientKeyPair();
     const signature = signData(clientKeyPair, data);
@@ -226,37 +358,79 @@ async function sendData(data) {
     const JSON_data = JSON.stringify({
         data: enctyptedData,
         signature: signature,
-        clientPubKey: clientPublicKey
+        clientPubKey: clientPublicKey,
+        assetID: assetID,
+        hash: p.getHash(data).substring(2)
     });
-    const response = await query('POST', URL + '/data', JSON_data);
+    const response = await query('POST', NODE_URL + '/data', JSON_data);
     return response;
 }
 
 async function getServerPublicKey() {
     try {
-        return await query('GET', URL + '/getPubKey');
+        return await query('GET', NODE_URL + '/getPubKey');
     } catch (e) {
         throw new Error('Cannot get server public key');
     }
 }
 
+/**
+ * Generate RSA key pair
+ */
 function newClientKeyPair() {
     return new NodeRSA.RSA({b: 1024});
 }
 
+/**
+ * Get Public key from key pair
+ * @param clientKeyPair RSA key pair
+ * @returns {PromiseLike<JsonWebKey | ArrayBuffer> | PromiseLike<ArrayBuffer> | PromiseLike<JsonWebKey> | *}
+ */
 function getClientPublicKey(clientKeyPair) {
     return clientKeyPair.exportKey('pkcs1-public');
 }
 
+/**
+ * Allows to encrypt data using RSA
+ * @param serverPublicKey Public key of server side
+ * @param data Data to encrypt
+ * @returns {String} Encrypted data
+ */
 function encryptData(serverPublicKey, data) {
     const key = new NodeRSA.RSA(serverPublicKey, 'pkcs1-public');
     return key.encrypt(data, 'base64');
 }
 
+/**
+ * Allows to sign data using RSA
+ * @param clientKey client Private key (key pair)
+ * @param data Data to sign
+ * @returns {Object} Sign data
+ */
 function signData(clientKey, data) {
     return clientKey.sign(data);
 }
 
+/**
+ * Allows to get assets by Asset id
+ * @param assetID Asset name
+ * @returns {Promise<Object>} assets
+ */
+async function getAssets(assetID) {
+    return await query('GET', NODE_URL + '/getAssets/' + assetID);
+}
+
+async function getFileFromServer(hash) {
+    return await query('GET', NODE_URL + '/getFile/' + hash);
+}
+
+/**
+ * Request to server side
+ * @param method Using method
+ * @param url URL to send
+ * @param data request data
+ * @returns {Promise<*>}
+ */
 async function query(method, url, data) {
     var settings = {
         "async": true,
@@ -276,6 +450,8 @@ async function query(method, url, data) {
     const result = await $.ajax(settings);
     return result;
 };
+
+
 
 
 
