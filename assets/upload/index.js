@@ -1,9 +1,6 @@
 const web3 = new Web3();
 const URL = 'http://23.100.12.138:3000';
 
-const left = 0;
-const right = 1;
-
 /**
  * Allows to send client data to server and get response
  * @returns {Promise<void>}
@@ -19,15 +16,15 @@ async function moveData() {
                 <table class="table table-bordered">
                     <tbody>
                     <tr>
-                        <td class="er" data-clipboard-text="_"><strong>Hash:</strong> 0x${serverData.hash}</td>
-                        <td class="er" data-clipboard-text="_"><strong> Timestamp:</strong> ${serverData.timstamp}</td>
-                        <td class="er" data-clipboard-text="_"><strong> Tx Number:</strong> ${serverData.txNumber}</td>
-                        <td class="er" data-clipboard-text="_"><strong> Asset Id:</strong> ${serverData.assetId}</td>
+                        <td class="er" data-clipboard-text="0x${serverData.hash}"><strong>Hash:</strong> 0x${serverData.hash}</td>
+                        <td class="er" data-clipboard-text="${serverData.timstamp}"><strong> Timestamp:</strong> ${serverData.timstamp}</td>
+                        <td class="er" data-clipboard-text="${serverData.txNumber}"><strong> Tx Number:</strong> ${serverData.txNumber}</td>
+                        <td class="er" data-clipboard-text="${serverData.assetId}"><strong> Asset Id:</strong> ${serverData.assetId}</td>
                     </tr>
                     </tbody>
                 </table>
                 <div class="text-center col-12">
-                    <button class="btn btn-lg btn-info er" data-clipboard-target=".er">Copy</button>
+                    <button class="btn btn-lg btn-info" onclick="$('.er').CopyToClipboard()" data-clipboard-target=".er">Copy</button>
                 </div>
             </div>
         </div
@@ -54,8 +51,8 @@ function getAssetID() {
         throw alert('Enter assetID');
 }
 
-function verify(assetId, txNumber, data, timestamp) {
-    const response = getData(assetId, txNumber, data, timestamp);
+async function verify(assetId, txNumber, data, timestamp) {
+    const response = await getData(assetId, txNumber, data, timestamp);
     const proof = response.Data;
     const key = Base64toHEX(response.Info.Key);
     const hash = Base64toHEX(response.Info.Hash);
@@ -72,11 +69,9 @@ function verify(assetId, txNumber, data, timestamp) {
  * @param timestamp {string} Time of adding data
  * @returns {Object}
  */
-function getData(assetId, txNumber, data, timestamp) {
-    const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", "/proof" + "/" + assetId + "/" + txNumber + "/" + data + "/" + timestamp, false); // false for synchronous request
-    xmlHttp.send(null);
-    return JSON.parse(xmlHttp.responseText);
+async function getData(assetId, txNumber, data, timestamp) {
+    const proof = await query("GET", URL + "/proof" + "/" + assetId + "/" + txNumber + "/" + data + "/" + timestamp);
+    return proof;
 }
 
 /**
@@ -337,8 +332,3 @@ async function query(method, url, data) {
     const result = await $.ajax(settings);
     return result;
 };
-
-
-
-
-

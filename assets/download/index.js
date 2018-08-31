@@ -8,21 +8,21 @@ async function checkAssetForIdentity() {
     const assetID = document.getElementById('AssetId2').value;
     const txNumber = document.getElementById('TxNumber').value;
     const timestamp = document.getElementById('Timestamp').value;
+    const assetHash = document.getElementById('File hash').value;
 
     const hash = await getRootHash();
 
     try {
-
-        const verifyObject = await verify(assetID, txNumber, hash.substring(2), timestamp);
+        const verifyObject = await verify(assetID, txNumber, assetHash.substring(2), timestamp);
         const enteredRoot = verifyObject.enteredRoot;
         const generatedRoot = verifyObject.generatedRoot;
         const proof = verifyObject.proof;
 
         document.getElementById('proofs').innerText = JSON.stringify(proof);
-        document.getElementById('fromBlockchain').innerText = '0x' + enteredRoot;
+        document.getElementById('fromBlockchain').innerText = hash;
         document.getElementById('generatedHash').innerText = '0x' + generatedRoot;
 
-        if (enteredRoot === generatedRoot)
+        if (enteredRoot === generatedRoot && enteredRoot === hash.substring(2))
             document.getElementById('verified').innerText = 'YES';
         else
             document.getElementById('verified').innerText = 'NO';
@@ -102,56 +102,6 @@ async function setData() {
         </td>
     `;
     }
-}
-
-/**
- * Allows to send client data to server and get response
- * @returns {Promise<void>}
- */
-async function moveData() {
-    const data = await getFile();
-    const serverData = await sendData(data);
-    document.getElementById('data').innerHTML += ` 
-    <li id="show3">
-        <h2 class="Asker">Save this information</h2>
-        <div class="container">
-            <div class="row">
-                <table class="table table-bordered">
-                    <tbody>
-                    <tr>
-                        <td class="er" data-clipboard-text="_"><strong>Hash:</strong> 0x${serverData.hash}</td>
-                        <td class="er" data-clipboard-text="_"><strong> Timestamp:</strong> ${serverData.timstamp}</td>
-                        <td class="er" data-clipboard-text="_"><strong> Tx Number:</strong> ${serverData.txNumber}</td>
-                        <td class="er" data-clipboard-text="_"><strong> Asset Id:</strong> ${serverData.assetId}</td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="text-center col-12">
-                    <button class="btn btn-lg btn-info" data-clipboard-target=".er">Copy</button>
-                </div>
-            </div>
-        </div
-    </li>`
-}
-
-/**
- * Get client file data
- * @returns {Promise<String>} file data (base64)
- */
-async function getFile() {
-    return await p.getFile();
-}
-
-let assetID;
-/**
- * Allows to get assetID from client
- */
-function getAssetID() {
-    const _assetID = document.getElementById('AssetId').value;
-    if (_assetID != '')
-        assetID = _assetID;
-    else
-        throw alert('Enter assetID');
 }
 
 async function verify(assetId, txNumber, data, timestamp) {
@@ -341,7 +291,7 @@ const p = new PoA();
 function getCell(assetId, txNumber) {
     const a = p.getHash(txNumber);
     const b = p.getHash(assetId);
-    return p.getHash(a.substring(2) + b.substring(2));
+    return p.getHash(a.substring(2) + b.substring(2)).substring(2);
 }
 
 /**
@@ -417,6 +367,7 @@ function signData(clientKey, data) {
  * @returns {Promise<Object>} assets
  */
 async function getAssets(assetID) {
+    console.log(assetID)
     return await query('GET', NODE_URL + '/getAssets/' + assetID);
 }
 
@@ -450,10 +401,3 @@ async function query(method, url, data) {
     const result = await $.ajax(settings);
     return result;
 };
-
-
-
-
-
-
-
