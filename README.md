@@ -22,5 +22,5 @@ GO_SERVER: URL of golang server
 
 ```
 npm i
-AUTH="" URL="" LOGIN="" PASSWORD="" DB="" node server.js
+AUTH="" GO_SERVER="" URL="" LOGIN="" PASSWORD="" DB="" node server.js
 ```
