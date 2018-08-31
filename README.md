@@ -27,3 +27,17 @@ npm i
 AUTH="" GO_SERVER="" URL="" LOGIN="" PASSWORD="" DB="" node server.js
 
 ```
+
+## Docker
+Перед тем, как билдить проект - необходимо добавить в .env переменные окружения
+```
+
+git clone "https://github.com/BANKEX/poa-history.git"
+
+git checkout production_server
+
+sudo docker build -t prod_server .
+
+sudo docker run --rm -it -p 3000:3000 prod_server
+
+```
