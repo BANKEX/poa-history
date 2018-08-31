@@ -25,7 +25,9 @@ async function addNewAsset(req, res) {
         return;
     }
 
-    const response = await request.addAsset(assetID, hash);
+    let response = await request.addAsset(assetID, hash);
+    if(response.Answer == 'This assetId is already created')
+        response = await request.updateAsset(assetID, hash);
     db.file.add(hash, name, toBuffer(data));
     res.statusCode = 200;
     res.send(response);

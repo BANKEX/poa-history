@@ -6,6 +6,8 @@ const GO_SERVER = process.env.GO_SERVER;
 
 const addAsset = async (assetID, hash) => await request('POST', `${GO_SERVER}/a/new/${assetID}/${hash}`);
 
+const updateAsset = async (assetID, hash) => await request('POST', `${GO_SERVER}/a/update/${assetID}/${hash}`);
+
 const getAssets = async () => await request('GET', `${GO_SERVER}/list`);
 
 const getProof = async (assetID, txNumber, hash, timestamp) => await request('GET', `${GO_SERVER}/proof/${assetID}/${txNumber}/${hash}/${timestamp}`);
@@ -26,6 +28,7 @@ async function request(method, url) {
 
 module.exports = {
     addAsset: addAsset,
+    updateAsset: updateAsset,
     getAssets: getAssets,
     getProof: getProof
 };
