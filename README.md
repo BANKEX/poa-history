@@ -29,7 +29,7 @@ AUTH="" GO_SERVER="" URL="" LOGIN="" PASSWORD="" DB="" node server.js
 ```
 
 ## Docker
-Перед тем, как билдить проект - необходимо добавить в .env переменные окружения
+Before you build a project - you need to add environment variables to .env
 ```
 
 git clone "https://github.com/BANKEX/poa-history.git"
