@@ -95,11 +95,13 @@ async function setData() {
 
     for (let i in assets) {
         document.getElementById('assets').innerHTML += `
-       <td>${assets[i].name}</td>
-        <td>${assets[i].txNumber}</td>
-        <td class="text-center">
-            <button onclick="downloadFile('${Base64toHEX(assets[i].hash)}', '${assets[i].name}')" class="btn btn-default btn-circle btn-sm btn-info">Download</button>
-        </td>
+        <tr>
+            <td>${assets[i].name}</td>
+            <td>${assets[i].txNumber}</td>
+            <td class="text-center">
+                <button onclick="downloadFile('${Base64toHEX(assets[i].hash)}', '${assets[i].name}')" class="btn btn-default btn-circle btn-sm btn-info">Download</button>
+            </td>
+        </tr>
     `;
     }
 }

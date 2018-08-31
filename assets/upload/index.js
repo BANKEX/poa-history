@@ -8,6 +8,7 @@ const URL = 'http://23.100.12.138:3000';
 async function moveData() {
     const file = (await getFile());
     const serverData = await sendData(file.data, file.name);
+    console.log(serverData)
     document.getElementById('data').innerHTML += ` 
     <li id="show3">
         <h2 class="Asker">Save this information</h2>
@@ -16,8 +17,8 @@ async function moveData() {
                 <table class="table table-bordered">
                     <tbody>
                     <tr>
-                        <td class="er" data-clipboard-text="0x${serverData.hash}"><strong>Hash:</strong> 0x${serverData.hash}</td>
-                        <td class="er" data-clipboard-text="${serverData.timstamp}"><strong> Timestamp:</strong> ${serverData.timstamp}</td>
+                        <td class="er" data-clipboard-text="0x${serverData.hash}"><strong>Hash:</strong> 0x${serverData.hash === undefined ? p.getHash(file.data).substring(2) : serverData.hash}</td>
+                        <td class="er" data-clipboard-text="${serverData.timstamp}"><strong> Timestamp:</strong> ${serverData.timstamp === undefined ? serverData.timestamp : serverData.timstamp}</td>
                         <td class="er" data-clipboard-text="${serverData.txNumber}"><strong> Tx Number:</strong> ${serverData.txNumber}</td>
                         <td class="er" data-clipboard-text="${serverData.assetId}"><strong> Asset Id:</strong> ${serverData.assetId}</td>
                     </tr>
