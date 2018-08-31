@@ -21,6 +21,9 @@ GO_SERVER: URL of golang server
 ## Deploying
 
 ```
+
 npm i
+
 AUTH="" GO_SERVER="" URL="" LOGIN="" PASSWORD="" DB="" node server.js
+
 ```
