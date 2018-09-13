@@ -1,5 +1,5 @@
 const web3 =  new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/1u84gV2YFYHHTTnh8uVl'));
-const NODE_URL = 'http://history.bankex.team:3000';
+const NODE_URL = 'https://history.bankex.team:3000';
 
 const left = 0;
 const right = 1;
