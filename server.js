@@ -1,7 +1,9 @@
-const express = require('express');
+const https = require('https');
+const fs = require('fs');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const handlers = require('./handlers/handlers');
+require('dotenv').config();
 
 const app = express();
 
@@ -19,4 +21,11 @@ app.get('/getFile/:hash', (req, res) => handlers.getFile(req, res));
 
 app.get('/proof/:assetID/:txNumber/:hash/:timestamp', (req, res) => handlers.getProof(req, res));
 
-app.listen(3000);
+const httpsOptions = {
+    key: fs.readFileSync(process.env.KEY),
+    cert: fs.readFileSync(process.env.CERT)
+};
+
+const server = https.createServer(httpsOptions, app).listen(3000, () => {
+    console.log('server running at ' + 3000)
+})
