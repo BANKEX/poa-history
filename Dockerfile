@@ -10,4 +10,4 @@ RUN go build -o main .
 EXPOSE 8080
 EXPOSE 27017
 
-CMD ["GIN_MODE=release /app/main"]
+CMD ["/app/main"]

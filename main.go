@@ -16,5 +16,4 @@ func main() {
 	r.Static("/assets/download", "./assets/download")
 
 	r.Run(":7070")
-	gin.SetMode(gin.ReleaseMode)
 }

@@ -1,5 +1,5 @@
 const web3 = new Web3();
-const URL = 'https://history.bankex.team:3000';
+const URL = 'https://history.bankex.team:3001';
 
 /**
  * Allows to send client data to server and get response
