@@ -7,7 +7,7 @@ RUN go get github.com/gin-gonic/gin
 
 RUN go build -o main .
 
-EXPOSE 8080
+EXPOSE 7070
 EXPOSE 27017
 
 CMD ["/app/main"]
