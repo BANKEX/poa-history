@@ -22,11 +22,13 @@ app.get('/getFile/:hash', (req, res) => handlers.getFile(req, res));
 
 app.get('/proof/:assetID/:txNumber/:hash/:timestamp', (req, res) => handlers.getProof(req, res));
 
-const httpsOptions = {
-    key: fs.readFileSync(process.env.KEY),
-    cert: fs.readFileSync(process.env.CERT)
-};
+// const httpsOptions = {
+//     key: fs.readFileSync(process.env.KEY),
+//     cert: fs.readFileSync(process.env.CERT)
+// };
 
-const server = https.createServer(httpsOptions, app).listen(3000, () => {
-    console.log('server running at ' + 3000)
-})
+// const server = https.createServer(httpsOptions, app).listen(3000, () => {
+//     console.log('server running at ' + 3000)
+// })
+
+app.listen(3000);
