@@ -1,5 +1,5 @@
 const web3 =  new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/1u84gV2YFYHHTTnh8uVl'));
-const NODE_URL = 'https://137.117.209.200:3000';
+const NODE_URL = 'https://history.westeurope.cloudapp.azure.com';
 
 const left = 0;
 const right = 1;
