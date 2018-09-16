@@ -1,5 +1,5 @@
 const web3 =  new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/1u84gV2YFYHHTTnh8uVl'));
-const NODE_URL = 'https://history.westeurope.cloudapp.azure.com';
+const NODE_URL = 'https://productdb.bankex.team';
 
 const left = 0;
 const right = 1;
