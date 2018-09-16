@@ -1,5 +1,5 @@
 const web3 = new Web3();
-const URL = 'https://history.westeurope.cloudapp.azure.com';
+const URL = 'https://productdb.bankex.team';
 
 /**
  * Allows to send client data to server and get response
