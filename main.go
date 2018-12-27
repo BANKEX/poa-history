@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/BANKEX/poa-history/server/db"
+	"github.com/BANKEX/poa-history/config"
+	"github.com/BANKEX/poa-history/server"
 )
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 	// @host history.bankex.team:8080
 	// @BasePath /
 
-	db.Connect()
+	cfg := config.GetConfig()
+	server.RunServer(server.Serve(cfg))
 
 }
